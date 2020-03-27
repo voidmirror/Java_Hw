@@ -1,75 +1,54 @@
 package com.company;
 
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.nio.CharBuffer;
 import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        String name, sex;
-        int birthYear = 0;
-        Calendar calendar = new GregorianCalendar();
-        Date date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        date = calendar.getTime();
+    public static void main(String[] args) throws FileNotFoundException {
+        String path = "src\\com\\company\\src\\vocabulary_check.txt";
+        File file = new File(path);
 
-        Scanner scanner = new Scanner(System.in);
+        HashMap<Character, Integer> hashMap = new HashMap<>();
+        for (char c = 'A'; c <= 'Z'; c++) {
+            hashMap.put(c, 0);
+        }
+        for (char c = 'a'; c <= 'z'; c++) {
+            hashMap.put(c, 0);
+        }
 
-        System.out.println("Enter your name: ");
-        name = scanner.next();
-        System.out.println("Enter your birthYear: ");
-        while (birthYear == 0) {
-            try {
-                birthYear = scanner.nextInt();
-                if (birthYear > date.getYear()) {
-                    System.out.println("Nope. Not from the future. Try again");
-                    birthYear = 0;
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+//        for (char c)
+        int cint;
+        try {
+            cint = fileReader.read();
+            char c = (char) cint;
+            while (cint != -1) {
+                if (hashMap.containsKey(c)) {
+                    hashMap.put(c, hashMap.get(c) + 1);
                 }
-                int age;
-                age = date.getYear() - birthYear + 1;
-                System.out.println("Age: " + age);
-            } catch (InputMismatchException e) {
-                System.out.println("Must be a number, repeat");
+                cint = fileReader.read();
+                c = (char) cint;
+//                System.out.println(c);
             }
-//            birthYear = scanner.nextInt();
-
-        }
-//        System.out.println("Enter your sex (m/f): ");
-//        sex = scanner.next();
-
-        StringBuffer stringBuffer = new StringBuffer();
-        int tmp;
-        ArrayList<String> fio = new ArrayList<>();
-        for (String retval : name.split(" ", 3)) {
-            fio.add(retval);
+        } catch (EOFException e) {
+            System.out.println("End of File");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        stringBuffer.append(fio.get(0));
-        System.out.println("Surname: " + stringBuffer);
-        stringBuffer.delete(0, stringBuffer.length());
+//        for (Map.Entry<Character, Integer> pair: hashMap.entrySet()) {
+//            System.out.println(pair.getKey() + ":" + pair.getValue());
+//        }
 
-        stringBuffer.append(fio.get(2));
-        if (stringBuffer.charAt(stringBuffer.length() - 1) == 'а') {
-            sex = "f";
-        } else {
-            sex = "m";
+        for (Map.Entry<Character, Integer> pair: hashMap.entrySet()) {
+            System.out.print(pair.getKey() + " ");
         }
-        System.out.println("Sex: " + sex);
-        stringBuffer.delete(0, stringBuffer.length());
-
-        StringBuffer initials = new StringBuffer();
-        initials.append(fio.get(0));
-        stringBuffer.append(initials.charAt(0));
-        initials.delete(0, initials.length());
-        initials.append(fio.get(1));
-        stringBuffer.append(initials.charAt(0));
-        initials.delete(0, initials.length());
-        initials.append(fio.get(2));
-        stringBuffer.append(initials.charAt(0));
-        initials.delete(0, initials.length());
-        System.out.println("Initials: " + stringBuffer);
-
-
-
+        System.out.println();
+        for (Map.Entry<Character, Integer> pair: hashMap.entrySet()) {
+            System.out.print(pair.getValue() + " ");
+        }
     }
 }
